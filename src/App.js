@@ -1,7 +1,7 @@
-import React, { useCallback, useRef, useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import Axios from 'axios';
 
-import { postsReducer, pagesReducer } from './reducers';
+import { postsReducer } from './reducers';
 
 import Header from './Header/Header';
 import PostCard from './PostCard/PostCard';
@@ -14,24 +14,6 @@ const mockImagesHeight = [271, 186, 192, 0]; // mock images heights where 0 will
 
 export default function App() {
   const [postsData, postsDispatch] = useReducer(postsReducer, { posts: [], loading: true, });
-  const [pages, pagerDispatch] = useReducer(pagesReducer, { page: 0 });
-
-  // create a ref object to apply infinite scrolling with an observer
-  let pageBottomRef = useRef(null);
-
-  // define intersection observer callback
-  const scrollObserver = useCallback(
-    node => {
-      new IntersectionObserver(entries => {
-        entries.forEach(en => {
-          if (en.intersectionRatio > 0) {
-            pagerDispatch({ type: 'ADVANCE_PAGE' });
-          }
-        });
-      }).observe(node);
-    },
-    [pagerDispatch]
-  );
 
   const filterByTag = (param) => () => {
     console.log('filter by', param);
@@ -41,7 +23,7 @@ export default function App() {
   useEffect(() => {
     postsDispatch({ type: 'GETTING_POSTS', loading: true });
 
-    Axios.get(`${apiMainUrl}?page=${pages.page}&limit=20`)    
+    Axios.get(`${apiMainUrl}`)    
       .then(response => response.data)
       .then(posts => {
         postsDispatch({ type: 'COLLECTING_POSTS', posts });
@@ -52,14 +34,7 @@ export default function App() {
         postsDispatch({ type: 'GETTING_POSTS', loading: false });
         console.log(e);
       })
-  }, [ postsDispatch, pages.page ]);
-
-  // call observer
-  useEffect(() => {
-    if (pageBottomRef.current) {
-      scrollObserver(pageBottomRef.current);
-    }
-  }, [scrollObserver, pageBottomRef]);
+  }, [ postsDispatch ]);
 
   return (
     <section className="App">
@@ -94,10 +69,9 @@ export default function App() {
 
         {postsData.loading && (
           <div className="loading">
-            <p>Fetching posts</p>
+            <p>Loading...</p>
           </div>
         )}
-        <div id="container-bottom" ref={pageBottomRef}></div>
       </main>
 
       <footer className="App__footer"></footer>

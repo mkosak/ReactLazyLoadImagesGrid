@@ -12,6 +12,10 @@
     @media (max-width: $breakpoint-xl) {
       margin-left: 6%;
     }
+    @media (max-width: $breakpoint-md) {
+      margin-left: auto;
+      max-width: 95%;
+    }
     @media (max-width: $breakpoint-sm) {
       margin-left: auto;
       max-width: 90%;
@@ -48,7 +52,7 @@
     columns: 4 $card-width;
   }
   @media (max-width: $breakpoint-md) {
-    columns: 2 $card-width;
+    columns: 3 $card-width;
   }
   @media (max-width: $breakpoint-sm) {
     columns: 1 $card-width;
