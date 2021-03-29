@@ -1,7 +1,12 @@
 import React, { useCallback, useRef, useReducer, useEffect } from 'react';
 import Axios from 'axios';
 
+import PostCard from './PostCard/PostCard';
+
 import './App.scss';
+
+const apiMainUrl = 'https://5c07ecd0646dca0013f87e8b.mockapi.io/flow';
+const apiAvaterUrl = 'https://avatars.abstractapi.com/v1?api_key=a265273c72a94acea28c942b20ae4458';
 
 export default function App() {
   const postsReducer = (state, action) => {
@@ -34,10 +39,10 @@ export default function App() {
   useEffect(() => {
     postsDispatch({ type: 'GETTING_POSTS', loading: true });
 
-    Axios.get(`https://picsum.photos/v2/list?page=${pages.page}&limit=10`)
+    //Axios.get(`${apiMainUrl}?page=${pages.page}&limit=10`)
+    Axios.get(`${apiMainUrl}`)    
       .then(response => response.data)
       .then(posts => {
-        // console.log('posts', posts);
         postsDispatch({ type: 'COLLECTING_POSTS', posts });
         postsDispatch({ type: 'GETTING_POSTS', loading: false });
       })
@@ -77,29 +82,27 @@ export default function App() {
 
       <main className="App__container">
         <div className="posts">
-          {postsData.posts.map((post) => {
-            const { id, author } = post;
+          {postsData.posts.map((post, index) => {
+            const { id, text, ownerName, likes, comments } = post;
 
             // mock images different heights
             const randHeight = mockImagesHeight[Math.floor(Math.random() * mockImagesHeight.length)];
             // mock the case with no image
-            const mockImageUrl = randHeight ? `https://picsum.photos/id/${id}/248/${randHeight}` : false;
+            const mockImageUrl = randHeight ? `https://picsum.photos/id/${id}/248/${randHeight}` : '';
+            // mock avatar
+            const mockAvatarUrl = `${apiAvaterUrl}&name=${ownerName}`;
 
             return (
-              <div key={id} className="post-card">
-                <div className="post-card__body" style={{ height: randHeight }}>
-                  {mockImageUrl && (
-                    <img
-                      alt={author}
-                      className="post-card__img"
-                      src={mockImageUrl}
-                    />
-                  )}
-                </div>
-                <div className="post-card__footer">
-                  <p className="post-card__text">{author}</p>
-                </div>
-              </div>
+              <PostCard 
+                key={`${id}_${index}`} 
+                url={mockImageUrl}
+                name={text}
+                owner={ownerName} 
+                ownerImage={mockAvatarUrl}
+                height={randHeight} 
+                likes={likes} 
+                comments={comments} 
+              />
             )
           })}
         </div>

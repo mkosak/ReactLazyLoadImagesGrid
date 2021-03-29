@@ -1,3 +1,24 @@
+@import './variables.scss';
+
 .App {
-  text-align: center;
+  color: $color-primary;
+  font: normal 500 15px/23px 'Inter';
+
+  &__container {
+    max-width: 1040px;
+    margin: 87px auto;
+  }
+}
+
+// masonry
+.posts {
+  columns: 6 $card-width;
+  column-gap: $card-gap * 2;
+  
+  & > div {
+    width: $card-width;
+    background: $card-bg-color;
+    margin: 0 $card-gap $card-gap * 2 0;
+    display: inline-block;
+  }
 }
