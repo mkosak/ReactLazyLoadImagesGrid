@@ -1,61 +1,25 @@
 import React, { useCallback, useRef, useReducer, useEffect } from 'react';
 import Axios from 'axios';
 
+import { postsReducer, pagesReducer } from './reducers';
+
+import Header from './Header/Header';
 import PostCard from './PostCard/PostCard';
 
 import './App.scss';
 
 const apiMainUrl = 'https://5c07ecd0646dca0013f87e8b.mockapi.io/flow';
 const apiAvaterUrl = 'https://avatars.abstractapi.com/v1?api_key=a265273c72a94acea28c942b20ae4458';
+const mockImagesHeight = [271, 186, 192, 0]; // mock images heights where 0 will load no image
 
 export default function App() {
-  const postsReducer = (state, action) => {
-    switch (action.type) {
-      case 'COLLECTING_POSTS':
-        return { ...state, posts: state.posts.concat(action.posts) }
-      case 'GETTING_POSTS':
-        return { ...state, loading: action.loading }
-      default:
-        return state;
-    }
-  };
-
-  const pagesReducer = (state, action) => {
-    switch (action.type) {
-      case 'ADVANCE_PAGE':
-        return { ...state, page: state.page + 1 }
-      default:
-        return state;
-    }
-  }
-  
   const [postsData, postsDispatch] = useReducer(postsReducer, { posts: [], loading: true, });
   const [pages, pagerDispatch] = useReducer(pagesReducer, { page: 0 });
 
-  // mock images heights where 0 will load no image
-  const mockImagesHeight = [271, 186, 192, 0];
-
-  // perform an API call
-  useEffect(() => {
-    postsDispatch({ type: 'GETTING_POSTS', loading: true });
-
-    //Axios.get(`${apiMainUrl}?page=${pages.page}&limit=10`)
-    Axios.get(`${apiMainUrl}`)    
-      .then(response => response.data)
-      .then(posts => {
-        postsDispatch({ type: 'COLLECTING_POSTS', posts });
-        postsDispatch({ type: 'GETTING_POSTS', loading: false });
-      })
-      .catch(e => {
-        // handle error
-        postsDispatch({ type: 'GETTING_POSTS', loading: false });
-        console.log(e);
-      })
-  }, [ postsDispatch, pages.page ]);
-
-  // implement infinite scrolling with intersection observer
+  // create a ref object to apply infinite scrolling with an observer
   let pageBottomRef = useRef(null);
 
+  // define intersection observer callback
   const scrollObserver = useCallback(
     node => {
       new IntersectionObserver(entries => {
@@ -69,6 +33,28 @@ export default function App() {
     [pagerDispatch]
   );
 
+  const filterByTag = (param) => () => {
+    console.log('filter by', param);
+  };
+
+  // perform an API call
+  useEffect(() => {
+    postsDispatch({ type: 'GETTING_POSTS', loading: true });
+
+    Axios.get(`${apiMainUrl}?page=${pages.page}&limit=20`)    
+      .then(response => response.data)
+      .then(posts => {
+        postsDispatch({ type: 'COLLECTING_POSTS', posts });
+        postsDispatch({ type: 'GETTING_POSTS', loading: false });
+      })
+      .catch(e => {
+        // handle error
+        postsDispatch({ type: 'GETTING_POSTS', loading: false });
+        console.log(e);
+      })
+  }, [ postsDispatch, pages.page ]);
+
+  // call observer
   useEffect(() => {
     if (pageBottomRef.current) {
       scrollObserver(pageBottomRef.current);
@@ -77,10 +63,9 @@ export default function App() {
 
   return (
     <section className="App">
-      <header className="App__header">
-      </header>      
-
       <main className="App__container">
+        <Header filterByTag={filterByTag} />
+
         <div className="posts">
           {postsData.posts.map((post, index) => {
             const { id, text, ownerName, likes, comments } = post;
@@ -107,16 +92,15 @@ export default function App() {
           })}
         </div>
 
-        {postsData.fetching && (
-          <div className="fetching">
+        {postsData.loading && (
+          <div className="loading">
             <p>Fetching posts</p>
           </div>
         )}
         <div id="container-bottom" ref={pageBottomRef}></div>
       </main>
 
-      <footer className="App__footer">
-      </footer>
+      <footer className="App__footer"></footer>
     </section>
   );
 }

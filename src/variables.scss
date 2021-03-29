@@ -1,10 +1,17 @@
 /* Colors */
 $color-primary: #000000;
 $color-secondary: #656974;
+$color-white: #ffffff;
 $color-red: #F12B65;
+$color-bg-tag: #EEEEEE;
 
 /* Card */
 $card-width: 24.8rem;
 $card-gap: .8rem;
 $card-bg-color: #F5F6F7;
 $card-icon-fill: #A2A5AE;
+
+/* Breakpoints */
+$breakpoint-xl: 1040px;
+$breakpoint-md: 986px;
+$breakpoint-sm: 580px;

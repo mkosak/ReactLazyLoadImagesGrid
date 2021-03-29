@@ -1,0 +1,44 @@
+@import './../variables.scss';
+
+.App__header {
+  padding-bottom: 2.2rem;
+
+  h1 {
+    margin: 0;
+    padding-bottom: .7rem;
+    font-weight: 700;
+    font-size: 2.4rem;
+    line-height: 3.4rem;
+    letter-spacing: .03rem;
+    color: $color-primary;
+  }
+
+  .message {    
+    max-width: 60%;
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 2.4rem;
+    color: $color-secondary;
+
+    @media (max-width: $breakpoint-sm) { 
+      max-width: 100%;
+    }
+  }
+
+  .tag {
+    display: inline-block;
+    padding: .3rem .6rem;
+    margin: 0 .4rem;
+    color: $color-secondary;
+    background-color: $color-bg-tag;
+    mix-blend-mode: normal;
+    border-radius: 6px;    
+    border: 0;
+
+    &:hover {
+      cursor: pointer;
+      color: $color-primary;
+      opacity: .8;
+    }
+  }
+}

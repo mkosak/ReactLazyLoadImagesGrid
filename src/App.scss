@@ -5,8 +5,26 @@
   font: normal 500 15px/23px 'Inter';
 
   &__container {
+    width: 95%;
     max-width: 1040px;
     margin: 87px auto;
+
+    @media (max-width: $breakpoint-xl) {
+      margin-left: 6%;
+    }
+    @media (max-width: $breakpoint-sm) {
+      margin-left: auto;
+      max-width: 90%;
+    }
+  }
+  &__footer {
+    position: fixed;
+    width: 100%;
+    height: 6.5rem;
+    left: 0;
+    bottom: 0;
+    background: $color-white;
+    box-shadow: 0 0 1rem rgba(0, 0, 0, .15);
   }
 }
 
@@ -20,5 +38,19 @@
     background: $card-bg-color;
     margin: 0 $card-gap $card-gap * 2 0;
     display: inline-block;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: $breakpoint-xl) {
+    columns: 4 $card-width;
+  }
+  @media (max-width: $breakpoint-md) {
+    columns: 2 $card-width;
+  }
+  @media (max-width: $breakpoint-sm) {
+    columns: 1 $card-width;
   }
 }

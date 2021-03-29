@@ -9,15 +9,29 @@
   opacity: 1;
   transition: all 0.25s ease;
 
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+
   &.loading {
     opacity: 0;
   }
 
   &__body {
     margin: 0;
+
+    @media (max-width: $breakpoint-sm) {
+      // TODO: find a better way to clear the height
+      height: auto!important;
+    }
   }
   &__img {
     max-width: 100%;
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+      height: auto;
+    }
   }
   &__footer {
     padding: .9rem 1.6rem;
