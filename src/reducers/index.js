@@ -11,7 +11,7 @@ export const postsReducer = (state, action) => {
 
 export const pagesReducer = (state, action) => {
   switch (action.type) {
-    case 'ADVANCE_PAGE':
+    case 'NEXT_PAGE':
       return { ...state, page: state.page + 1 }
     default:
       return state;

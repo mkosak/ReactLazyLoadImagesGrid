@@ -1,7 +1,7 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect, useRef, useCallback } from 'react';
 import Axios from 'axios';
 
-import { postsReducer } from './reducers';
+import { postsReducer, pagesReducer } from './reducers';
 
 import Header from './Header/Header';
 import PostCard from './PostCard/PostCard';
@@ -14,16 +14,33 @@ const mockImagesHeight = [271, 186, 192, 0]; // mock images heights where 0 will
 
 export default function App() {
   const [postsData, postsDispatch] = useReducer(postsReducer, { posts: [], loading: true, });
+  const [pagesData, pagesDispatch] = useReducer(pagesReducer, { page: 0 })
 
+  // filter posts list
   const filterByTag = (param) => () => {
     console.log('filter by', param);
   };
+
+  // implement infinite scrolling with intersection observer
+  let pageBottom = useRef(null);
+  const observeScroll = useCallback(
+    node => {
+      new IntersectionObserver(entries => {
+        entries.forEach(en => {
+          if (en.intersectionRatio > 0) {
+            pagesDispatch({ type: 'NEXT_PAGE' });
+          }
+        });
+      }).observe(node);
+    },
+    [pagesDispatch]
+  );
 
   // perform an API call
   useEffect(() => {
     postsDispatch({ type: 'GETTING_POSTS', loading: true });
 
-    Axios.get(`${apiMainUrl}`)    
+    Axios.get(`${apiMainUrl}?page=${pagesData.page}&limit=5`)    
       .then(response => response.data)
       .then(posts => {
         postsDispatch({ type: 'COLLECTING_POSTS', posts });
@@ -34,7 +51,14 @@ export default function App() {
         postsDispatch({ type: 'GETTING_POSTS', loading: false });
         console.log(e);
       })
-  }, [ postsDispatch ]);
+  }, [ postsDispatch, pagesData.page ]);
+
+  // perform scrolling observation
+  useEffect(() => {
+    if (pageBottom.current) {
+      observeScroll(pageBottom.current);
+    }
+  }, [observeScroll, pageBottom]);
 
   return (
     <section className="App">
@@ -72,6 +96,8 @@ export default function App() {
             <p>Loading...</p>
           </div>
         )}
+
+        <div id="pageBottom" ref={pageBottom}></div>
       </main>
 
       <footer className="App__footer"></footer>
